@@ -35,4 +35,16 @@ class ScoreBoardTest {
         assertEquals(HOME_TEAM, scoreBoardAfterStartingMatch.get(0).getHomeTeam());
         assertEquals(AWAY_TEAM, scoreBoardAfterStartingMatch.get(0).getAwayTeam());
     }
+
+    @Test
+    void shouldUpdateLiveScoreForMatch() {
+        ScoreBoard scoreBoard = new ScoreBoard();
+        scoreBoard.startMatch(HOME_TEAM, AWAY_TEAM);
+
+        scoreBoard.updateScore(HOME_TEAM, AWAY_TEAM, 2, 1);
+
+        Match fixture = scoreBoard.getSummary().get(0);
+        assertEquals(2, fixture.getHomeScore());
+        assertEquals(1, fixture.getAwayScore());
+    }
 }
