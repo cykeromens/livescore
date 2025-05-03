@@ -1,3 +1,5 @@
+package com.assessment.livescore;
+
 public class Match {
 
     private final String home;
