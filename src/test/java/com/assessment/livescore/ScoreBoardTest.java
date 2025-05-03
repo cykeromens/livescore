@@ -88,4 +88,33 @@ class ScoreBoardTest {
 
         assertTrue(scoreBoard.getSummary().isEmpty());
     }
+
+//    Mexico 0 - Canada 5
+//    b. Spain 10 - Brazil 2
+//    c. Germany 2 - France 2
+//    d. Uruguay 6 - Italy 6
+//    e. Argentina 3 - Australia 1
+    @Test
+    void shouldReturnMatchesOrderedByScoreAndMostRecent() {
+        ScoreBoard sb = new ScoreBoard();
+        sb.startMatch("Mexico","Canada"); sb.updateScore("Mexico","Canada",0,5);
+        sb.startMatch("Spain","Brazil"); sb.updateScore("Spain","Brazil",10,2);
+        sb.startMatch("Germany","France"); sb.updateScore("Germany","France",2,2);
+        sb.startMatch("Uruguay","Italy"); sb.updateScore("Uruguay","Italy",6,6);
+        sb.startMatch("Argentina","Australia"); sb.updateScore("Argentina","Australia",3,1);
+
+        List<Match> sum = sb.getSummary();
+
+        assertMatch(sum.get(0), "Uruguay", "Italy");
+        assertMatch(sum.get(1), "Spain", "Brazil");
+        assertMatch(sum.get(2), "Mexico", "Canada");
+        assertMatch(sum.get(3), "Argentina", "Australia");
+        assertMatch(sum.get(4), "Germany", "France");
+    }
+
+    private static void assertMatch(Match match, String home, String away) {
+        assertEquals(home, match.getHomeTeam());
+        assertEquals(away, match.getAwayTeam());
+    }
+
 }
