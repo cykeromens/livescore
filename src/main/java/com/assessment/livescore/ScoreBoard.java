@@ -4,7 +4,7 @@ import com.assessment.livescore.exception.InvalidScoreException;
 import com.assessment.livescore.exception.MatchNotFoundException;
 
 import java.util.ArrayList;
-import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 
 public class ScoreBoard {
@@ -16,7 +16,11 @@ public class ScoreBoard {
     }
 
     public List<Match> getSummary() {
-        return Collections.unmodifiableList(matches);
+        return matches.stream()
+                .sorted(Comparator.comparingInt((Match m) -> m.getHomeScore()+m.getAwayScore())
+                        .reversed()
+                        .thenComparing(m -> -matches.indexOf(m)))
+                .toList();
     }
 
     public void updateScore(String home, String away, int homeScore, int awayScore) {
