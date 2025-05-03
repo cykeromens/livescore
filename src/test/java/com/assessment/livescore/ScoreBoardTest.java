@@ -5,6 +5,7 @@ import org.junit.jupiter.api.Test;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 class ScoreBoardTest {
 
@@ -46,5 +47,15 @@ class ScoreBoardTest {
         Match fixture = scoreBoard.getSummary().get(0);
         assertEquals(2, fixture.getHomeScore());
         assertEquals(1, fixture.getAwayScore());
+    }
+
+    @Test
+    void shouldThrowMatchNotFoundExceptionForMatchNotFound() {
+        ScoreBoard scoreBoard = new ScoreBoard();
+
+        MatchNotFoundException matchNotFoundException = assertThrows(MatchNotFoundException.class, () ->
+                scoreBoard.updateScore(HOME_TEAM, AWAY_TEAM, 2, 1));
+
+        assertEquals("Match not found!", matchNotFoundException.getMessage());
     }
 }
