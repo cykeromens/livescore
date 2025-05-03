@@ -17,6 +17,8 @@ public class ScoreBoard {
     }
 
     public void updateScore(String home, String away, int homeScore, int awayScore) {
+        checkIfValidScore(homeScore, awayScore);
+
         for (Match match : matches) {
             if (match.getHomeTeam().equals(home) && match.getAwayTeam().equals(away)) {
                 match.setHomeScore(homeScore);
@@ -31,4 +33,7 @@ public class ScoreBoard {
         throw new MatchNotFoundException();
     }
 
+    private static void checkIfValidScore(int homeScore, int awayScore) {
+        if (homeScore < 0 || awayScore < 0) throw new InvalidScoreException();
+    }
 }
