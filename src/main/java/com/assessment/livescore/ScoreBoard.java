@@ -36,4 +36,9 @@ public class ScoreBoard {
     private static void checkIfValidScore(int homeScore, int awayScore) {
         if (homeScore < 0 || awayScore < 0) throw new InvalidScoreException();
     }
+
+    public void finishMatch(String home, String away) {
+        matches.removeIf(m -> m.getHomeTeam().equals(home) && m.getAwayTeam().equals(away));
+    }
+
 }
