@@ -89,11 +89,6 @@ class ScoreBoardTest {
         assertTrue(scoreBoard.getSummary().isEmpty());
     }
 
-//    Mexico 0 - Canada 5
-//    b. Spain 10 - Brazil 2
-//    c. Germany 2 - France 2
-//    d. Uruguay 6 - Italy 6
-//    e. Argentina 3 - Australia 1
     @Test
     void shouldReturnMatchesOrderedByScoreAndMostRecent() {
         ScoreBoard sb = new ScoreBoard();
