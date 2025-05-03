@@ -6,8 +6,7 @@ import org.junit.jupiter.params.provider.CsvSource;
 
 import java.util.List;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.*;
 
 class ScoreBoardTest {
 
@@ -75,5 +74,16 @@ class ScoreBoardTest {
                 scoreBoard.updateScore(HOME_TEAM, AWAY_TEAM, homeScore, awayScore));
 
         assertEquals("Scores must be non-negative!", invalidScoreException.getMessage());
+    }
+
+    @Test
+    void shouldFinishMatchAndRemoveMatchFromBoard() {
+        ScoreBoard scoreBoard = new ScoreBoard();
+        scoreBoard.startMatch(HOME_TEAM, AWAY_TEAM);
+        assertEquals(1, scoreBoard.getSummary().size());
+
+        scoreBoard.finishMatch(HOME_TEAM, AWAY_TEAM);
+
+        assertTrue(scoreBoard.getSummary().isEmpty());
     }
 }
