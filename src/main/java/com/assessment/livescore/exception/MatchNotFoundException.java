@@ -1,4 +1,4 @@
-package com.assessment.livescore;
+package com.assessment.livescore.exception;
 
 public class MatchNotFoundException extends RuntimeException {
 
