@@ -2,6 +2,8 @@ package com.assessment.livescore;
 
 public class Match {
 
+    private final long startTime = System.nanoTime();
+
     private final String home;
     private final String away;
     private int homeScore = 0;
@@ -33,5 +35,9 @@ public class Match {
 
     public void setAwayScore(int awayScore) {
         this.awayScore = awayScore;
+    }
+
+    public long getStartTime() {
+        return startTime;
     }
 }

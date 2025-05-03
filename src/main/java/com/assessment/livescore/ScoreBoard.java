@@ -19,7 +19,7 @@ public class ScoreBoard {
         return matches.stream()
                 .sorted(Comparator.comparingInt((Match m) -> m.getHomeScore()+m.getAwayScore())
                         .reversed()
-                        .thenComparing(m -> -matches.indexOf(m)))
+                        .thenComparing(m -> - m.getStartTime()))
                 .toList();
     }
 
