@@ -1,6 +1,7 @@
 package com.assessment.livescore;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 public class ScoreBoard {
@@ -12,6 +13,6 @@ public class ScoreBoard {
     }
 
     public List<Match> getSummary() {
-        return new ArrayList<>(matches);
+        return Collections.unmodifiableList(matches);
     }
 }
