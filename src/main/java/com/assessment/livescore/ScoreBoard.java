@@ -24,6 +24,11 @@ public class ScoreBoard {
                 return;
             }
         }
+        throwMatchNotFoundException();
+    }
+
+    private static void throwMatchNotFoundException() {
+        throw new MatchNotFoundException();
     }
 
 }
