@@ -1,6 +1,8 @@
 package com.assessment.livescore;
 
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.CsvSource;
 
 import java.util.List;
 
@@ -57,5 +59,21 @@ class ScoreBoardTest {
                 scoreBoard.updateScore(HOME_TEAM, AWAY_TEAM, 2, 1));
 
         assertEquals("Match not found!", matchNotFoundException.getMessage());
+    }
+
+    @ParameterizedTest
+    @CsvSource({
+            "-1, 1",
+            "-1, -1",
+            "1, -1"
+    })
+    void shouldNotUpdateScoreForScoreLessThanZero(int homeScore, int awayScore) {
+        ScoreBoard scoreBoard = new ScoreBoard();
+        scoreBoard.startMatch(HOME_TEAM, AWAY_TEAM);
+
+        InvalidScoreException invalidScoreException = assertThrows(InvalidScoreException.class, () ->
+                scoreBoard.updateScore(HOME_TEAM, AWAY_TEAM, homeScore, awayScore));
+
+        assertEquals("Scores must be non-negative!", invalidScoreException.getMessage());
     }
 }
