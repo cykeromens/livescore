@@ -15,4 +15,15 @@ public class ScoreBoard {
     public List<Match> getSummary() {
         return Collections.unmodifiableList(matches);
     }
+
+    public void updateScore(String home, String away, int homeScore, int awayScore) {
+        for (Match match : matches) {
+            if (match.getHomeTeam().equals(home) && match.getAwayTeam().equals(away)) {
+                match.setHomeScore(homeScore);
+                match.setAwayScore(awayScore);
+                return;
+            }
+        }
+    }
+
 }
