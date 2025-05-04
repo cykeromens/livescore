@@ -2,20 +2,17 @@ package com.assessment.livescore.model;
 
 import com.assessment.livescore.exception.InvalidTeamException;
 import lombok.Getter;
-import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
 @Getter
-public class Match {
+public final class Match {
 
     private final long startTime;
 
     private final String homeTeam;
     private final String awayTeam;
-    @Setter
     private int homeScore;
-    @Setter
     private int awayScore;
 
     public Match(String homeTeam, String awayTeam) {
@@ -45,6 +42,11 @@ public class Match {
         }
 
         log.debug("Team validation passed for '{}' vs '{}'", homeTeam, awayTeam);
+    }
+
+    public void updateScore(int homeScore, int awayScore){
+        this.homeScore = homeScore;
+        this.awayScore = awayScore;
     }
 
     private boolean isNullOrBlank(String value) {

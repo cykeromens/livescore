@@ -46,8 +46,7 @@ public class ScoreBoardServiceImpl implements ScoreBoardService {
                     return new MatchNotFoundException();
                 });
 
-        match.setHomeScore(homeScore);
-        match.setAwayScore(awayScore);
+        match.updateScore(homeScore, awayScore);
         log.info("Updated score: {} vs {} => {}:{}", home, away, homeScore, awayScore);
     }
 

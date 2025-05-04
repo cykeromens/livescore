@@ -3,12 +3,14 @@ package com.assessment.livescore.repository;
 
 import com.assessment.livescore.model.Match;
 
-import java.util.LinkedHashMap;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
+
 public class InMemoryMatchRepository implements MatchRepository {
-    private final LinkedHashMap<String, Match> store = new LinkedHashMap<>();
+    private final Map<String, Match> store = new HashMap<>();
 
     @Override public void add(Match match) {
         store.put(key(match.getHomeTeam(), match.getAwayTeam()), match);
