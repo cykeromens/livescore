@@ -90,6 +90,16 @@ class ScoreBoardTest {
     }
 
     @Test
+    void shouldThrowMatchNotFoundExceptionForMatchNotOnScoreBoard() {
+        ScoreBoard scoreBoard = new ScoreBoard();
+
+        MatchNotFoundException matchNotFoundException = assertThrows(MatchNotFoundException.class, () ->
+                scoreBoard.finishMatch(HOME_TEAM, AWAY_TEAM));
+
+        assertEquals("Match not found!", matchNotFoundException.getMessage());
+    }
+
+    @Test
     void shouldReturnMatchesOrderedByScoreAndMostRecent() {
         ScoreBoard sb = new ScoreBoard();
         sb.startMatch("Mexico","Canada"); sb.updateScore("Mexico","Canada",0,5);
