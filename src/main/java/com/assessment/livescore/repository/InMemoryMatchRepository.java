@@ -3,27 +3,35 @@ package com.assessment.livescore.repository;
 
 import com.assessment.livescore.model.Match;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 public class InMemoryMatchRepository implements MatchRepository {
-    private final List<Match> store = new ArrayList<>();
+    private final LinkedHashMap<String, Match> store = new LinkedHashMap<>();
 
     @Override public void add(Match match) {
-        store.add(match);
+        store.put(key(match.getHomeTeam(), match.getAwayTeam()), match);
     }
 
-    @Override public Optional<Match> find(String home, String away) {
-        return store.stream()
-            .filter(match -> match.matches(home, away))
-            .findFirst();
+    @Override
+    public Optional<Match> find(String home, String away) {
+        return Optional.ofNullable(store.get(key(home, away)));
     }
-    @Override public boolean remove(String home, String away) {
-        return store.removeIf(match -> match.matches(home, away));
+
+    @Override
+    public boolean remove(String home, String away) {
+        return find(home, away)
+                .map(m -> store.remove(key(home, away), m))
+                .orElse(false);
     }
-    @Override public List<Match> getAll() {
-        return Collections.unmodifiableList(store);
+
+    @Override
+    public List<Match> getAll() {
+        return store.values().stream().toList();
+    }
+
+    private String key(String homeTeam, String awayTeam){
+        return String.join("|", homeTeam, awayTeam);
     }
 }
+
+
