@@ -1,4 +1,4 @@
-package com.assessment.livescore;
+package com.assessment.livescore.model;
 
 import com.assessment.livescore.exception.InvalidTeamException;
 import lombok.Getter;
@@ -49,5 +49,9 @@ public class Match {
 
     private boolean isNullOrBlank(String value) {
         return value == null || value.isBlank();
+    }
+
+    public boolean matches(String homeTeam, String awayTeam) {
+        return this.homeTeam.equals(homeTeam) && this.awayTeam.equals(awayTeam);
     }
 }

@@ -1,4 +1,4 @@
-package com.assessment.livescore;
+package com.assessment.livescore.model;
 
 import com.assessment.livescore.exception.InvalidTeamException;
 import org.junit.jupiter.params.ParameterizedTest;

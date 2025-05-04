@@ -2,26 +2,31 @@ package com.assessment.livescore;
 
 import com.assessment.livescore.exception.InvalidScoreException;
 import com.assessment.livescore.exception.MatchNotFoundException;
+import com.assessment.livescore.model.Match;
+import com.assessment.livescore.repository.MatchRepository;
 import lombok.extern.slf4j.Slf4j;
 
-import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
-import java.util.Optional;
 
 @Slf4j
 public class ScoreBoard {
 
-    private final List<Match> matches = new ArrayList<>();
+    private final MatchRepository matchRepository;
+
+    public ScoreBoard(MatchRepository matchRepository){
+        this.matchRepository = matchRepository;
+    }
 
     public void startMatch(String home, String away) {
         Match match = new Match(home, away);
-        matches.add(match);
+        matchRepository.add(match);
         log.info("Match started: {} vs {}", home, away);
     }
 
     public List<Match> getSummary() {
-        return matches.stream()
+        return matchRepository.getAll()
+                .stream()
                 .sorted(Comparator
                         .comparingInt((Match m) -> m.getHomeScore() + m.getAwayScore())
                         .reversed()
@@ -32,7 +37,7 @@ public class ScoreBoard {
     public void updateScore(String home, String away, int homeScore, int awayScore) {
         validateScore(homeScore, awayScore);
 
-        Match match = findMatch(home, away)
+        Match match = matchRepository.find(home, away)
                 .orElseThrow(() -> {
                     log.warn("Update failed: Match not found for {} vs {}", home, away);
                     return new MatchNotFoundException();
@@ -44,7 +49,7 @@ public class ScoreBoard {
     }
 
     public void finishMatch(String home, String away) {
-        boolean removed = matches.removeIf(m -> m.getHomeTeam().equals(home) && m.getAwayTeam().equals(away));
+        boolean removed = matchRepository.remove(home, away);
         if (removed) {
             log.info("Match finished: {} vs {}", home, away);
         } else {
@@ -60,9 +65,4 @@ public class ScoreBoard {
         }
     }
 
-    private Optional<Match> findMatch(String home, String away) {
-        return matches.stream()
-                .filter(m -> m.getHomeTeam().equals(home) && m.getAwayTeam().equals(away))
-                .findFirst();
-    }
 }

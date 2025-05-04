@@ -2,6 +2,10 @@ package com.assessment.livescore;
 
 import com.assessment.livescore.exception.InvalidScoreException;
 import com.assessment.livescore.exception.MatchNotFoundException;
+import com.assessment.livescore.model.Match;
+import com.assessment.livescore.repository.InMemoryMatchRepository;
+import com.assessment.livescore.repository.MatchRepository;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
@@ -15,6 +19,13 @@ class ScoreBoardTest {
     private static final String HOME_TEAM = "Mexico";
     private static final String AWAY_TEAM = "Canada";
 
+    private MatchRepository matchRepository;
+
+    @BeforeEach
+    public void setup(){
+        this.matchRepository = new InMemoryMatchRepository();
+    }
+
     @Test
     void shouldCreateNewMatchWithTeamsAndZeroScore() {
         Match match = new Match(HOME_TEAM, AWAY_TEAM);
@@ -27,7 +38,7 @@ class ScoreBoardTest {
 
     @Test
     void shouldStartMatchAndDisplayOnScoreBoard() {
-        ScoreBoard scoreBoard = new ScoreBoard();
+        ScoreBoard scoreBoard = new ScoreBoard(matchRepository);
         List<Match> scoreBoardBeforeStartingMatch = scoreBoard.getSummary();
         assertEquals(0, scoreBoardBeforeStartingMatch.size());
 
@@ -42,7 +53,7 @@ class ScoreBoardTest {
 
     @Test
     void shouldUpdateLiveScoreForMatch() {
-        ScoreBoard scoreBoard = new ScoreBoard();
+        ScoreBoard scoreBoard = new ScoreBoard(matchRepository);
         scoreBoard.startMatch(HOME_TEAM, AWAY_TEAM);
 
         scoreBoard.updateScore(HOME_TEAM, AWAY_TEAM, 2, 1);
@@ -54,7 +65,7 @@ class ScoreBoardTest {
 
     @Test
     void shouldThrowMatchNotFoundExceptionForMatchNotFound() {
-        ScoreBoard scoreBoard = new ScoreBoard();
+        ScoreBoard scoreBoard = new ScoreBoard(matchRepository);
 
         MatchNotFoundException matchNotFoundException = assertThrows(MatchNotFoundException.class, () ->
                 scoreBoard.updateScore(HOME_TEAM, AWAY_TEAM, 2, 1));
@@ -69,7 +80,7 @@ class ScoreBoardTest {
             "1, -1"
     })
     void shouldNotUpdateScoreForScoreLessThanZero(int homeScore, int awayScore) {
-        ScoreBoard scoreBoard = new ScoreBoard();
+        ScoreBoard scoreBoard = new ScoreBoard(matchRepository);
         scoreBoard.startMatch(HOME_TEAM, AWAY_TEAM);
 
         InvalidScoreException invalidScoreException = assertThrows(InvalidScoreException.class, () ->
@@ -80,7 +91,7 @@ class ScoreBoardTest {
 
     @Test
     void shouldFinishMatchAndRemoveMatchFromBoard() {
-        ScoreBoard scoreBoard = new ScoreBoard();
+        ScoreBoard scoreBoard = new ScoreBoard(matchRepository);
         scoreBoard.startMatch(HOME_TEAM, AWAY_TEAM);
         assertEquals(1, scoreBoard.getSummary().size());
 
@@ -91,7 +102,7 @@ class ScoreBoardTest {
 
     @Test
     void shouldThrowMatchNotFoundExceptionForMatchNotOnScoreBoard() {
-        ScoreBoard scoreBoard = new ScoreBoard();
+        ScoreBoard scoreBoard = new ScoreBoard(matchRepository);
 
         MatchNotFoundException matchNotFoundException = assertThrows(MatchNotFoundException.class, () ->
                 scoreBoard.finishMatch(HOME_TEAM, AWAY_TEAM));
@@ -101,7 +112,7 @@ class ScoreBoardTest {
 
     @Test
     void shouldReturnMatchesOrderedByScoreAndMostRecent() {
-        ScoreBoard sb = new ScoreBoard();
+        ScoreBoard sb = new ScoreBoard(matchRepository);
         sb.startMatch("Mexico","Canada"); sb.updateScore("Mexico","Canada",0,5);
         sb.startMatch("Spain","Brazil"); sb.updateScore("Spain","Brazil",10,2);
         sb.startMatch("Germany","France"); sb.updateScore("Germany","France",2,2);
