@@ -23,4 +23,16 @@ class MatchTest {
         assertEquals("Home and Away teams must not be null or blank!", invalidTeamException.getMessage());
     }
 
+
+    @ParameterizedTest
+    @CsvSource({
+            "CANADA, Canada",
+            "CaNadA , Canada",
+            "canada , Canada",
+    })
+    void shouldThrowExceptionWhenTeamsAreSameIgnoringCase() {
+        InvalidTeamException ex = assertThrows(InvalidTeamException.class,
+                () -> new Match("Argentina", "argentina"));
+        assertEquals("Home and Away teams must be different!", ex.getMessage());
+    }
 }
