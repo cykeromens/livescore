@@ -17,6 +17,9 @@ public class Match {
         if (homeTeam == null || awayTeam == null || homeTeam.isBlank() || awayTeam.isBlank()) {
             throw new InvalidTeamException("Home and Away teams must not be null or blank!");
         }
+        if (homeTeam.equalsIgnoreCase(awayTeam)) {
+            throw new InvalidTeamException("Home and Away teams must be different!");
+        }
         this.homeTeam = homeTeam;
         this.awayTeam = awayTeam;
     }
