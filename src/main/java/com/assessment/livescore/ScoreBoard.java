@@ -1,9 +1,9 @@
 package com.assessment.livescore;
 
-import com.assessment.livescore.exception.InvalidScoreException;
 import com.assessment.livescore.exception.MatchNotFoundException;
 import com.assessment.livescore.model.Match;
 import com.assessment.livescore.repository.MatchRepository;
+import com.assessment.livescore.validation.ScoreValidator;
 import lombok.extern.slf4j.Slf4j;
 
 import java.util.Comparator;
@@ -13,9 +13,11 @@ import java.util.List;
 public class ScoreBoard {
 
     private final MatchRepository matchRepository;
+    private final ScoreValidator scoreValidator;
 
-    public ScoreBoard(MatchRepository matchRepository){
+    public ScoreBoard(MatchRepository matchRepository, ScoreValidator scoreValidator){
         this.matchRepository = matchRepository;
+        this.scoreValidator = scoreValidator;
     }
 
     public void startMatch(String home, String away) {
@@ -35,7 +37,7 @@ public class ScoreBoard {
     }
 
     public void updateScore(String home, String away, int homeScore, int awayScore) {
-        validateScore(homeScore, awayScore);
+        scoreValidator.validate(homeScore, awayScore);
 
         Match match = matchRepository.find(home, away)
                 .orElseThrow(() -> {
@@ -55,13 +57,6 @@ public class ScoreBoard {
         } else {
             log.warn("Finish failed: Match not found for {} vs {}", home, away);
             throw new MatchNotFoundException();
-        }
-    }
-
-    private void validateScore(int homeScore, int awayScore) {
-        if (homeScore < 0 || awayScore < 0) {
-            log.error("Invalid score: {}:{}", homeScore, awayScore);
-            throw new InvalidScoreException();
         }
     }
 
