@@ -6,18 +6,22 @@ import lombok.Data;
 @Data
 public class Match {
 
-    private final long startTime = System.nanoTime();
+    private final long startTime;
 
     private final String homeTeam;
     private final String awayTeam;
-    private int homeScore = 0;
-    private int awayScore = 0;
+    private int homeScore;
+    private int awayScore;
 
     public Match(String homeTeam, String awayTeam) {
         validateTeams(homeTeam, awayTeam);
 
         this.homeTeam = homeTeam;
         this.awayTeam = awayTeam;
+
+        this.startTime = System.nanoTime();
+        this.homeScore = 0;
+        this.awayScore = 0;
     }
 
     private void validateTeams(String homeTeam, String awayTeam) {
