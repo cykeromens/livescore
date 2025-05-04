@@ -4,6 +4,7 @@ import com.assessment.livescore.exception.InvalidScoreException;
 import com.assessment.livescore.exception.MatchNotFoundException;
 import com.assessment.livescore.model.Match;
 import com.assessment.livescore.repository.InMemoryMatchRepository;
+import com.assessment.livescore.service.ScoreBoardServiceImpl;
 import com.assessment.livescore.strategy.DefaultSummaryStrategy;
 import com.assessment.livescore.validation.ScoreValidator;
 import org.junit.jupiter.api.BeforeEach;
@@ -15,16 +16,16 @@ import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-class ScoreBoardTest {
+class ScoreBoardServiceTest {
 
     private static final String HOME_TEAM = "Mexico";
     private static final String AWAY_TEAM = "Canada";
 
-    private ScoreBoard scoreBoard;
+    private ScoreBoardService scoreBoardService;
 
     @BeforeEach
     public void setup(){
-        this.scoreBoard = new ScoreBoard(
+        this.scoreBoardService = new ScoreBoardServiceImpl(
                 new InMemoryMatchRepository(),
                 new ScoreValidator(),
                 new DefaultSummaryStrategy()
@@ -44,12 +45,12 @@ class ScoreBoardTest {
 
     @Test
     void shouldStartMatchAndDisplayOnScoreBoard() {
-        List<Match> scoreBoardBeforeStartingMatch = scoreBoard.getSummary();
+        List<Match> scoreBoardBeforeStartingMatch = scoreBoardService.getSummary();
         assertEquals(0, scoreBoardBeforeStartingMatch.size());
 
-        scoreBoard.startMatch(HOME_TEAM, AWAY_TEAM);
+        scoreBoardService.startMatch(HOME_TEAM, AWAY_TEAM);
 
-        List<Match> scoreBoardAfterStartingMatch = scoreBoard.getSummary();
+        List<Match> scoreBoardAfterStartingMatch = scoreBoardService.getSummary();
 
         assertEquals(1, scoreBoardAfterStartingMatch.size());
         assertEquals(HOME_TEAM, scoreBoardAfterStartingMatch.get(0).getHomeTeam());
@@ -58,11 +59,11 @@ class ScoreBoardTest {
 
     @Test
     void shouldUpdateLiveScoreForMatch() {
-        scoreBoard.startMatch(HOME_TEAM, AWAY_TEAM);
+        scoreBoardService.startMatch(HOME_TEAM, AWAY_TEAM);
 
-        scoreBoard.updateScore(HOME_TEAM, AWAY_TEAM, 2, 1);
+        scoreBoardService.updateScore(HOME_TEAM, AWAY_TEAM, 2, 1);
 
-        Match fixture = scoreBoard.getSummary().get(0);
+        Match fixture = scoreBoardService.getSummary().get(0);
         assertEquals(2, fixture.getHomeScore());
         assertEquals(1, fixture.getAwayScore());
     }
@@ -70,7 +71,7 @@ class ScoreBoardTest {
     @Test
     void shouldThrowMatchNotFoundExceptionForMatchNotFound() {
         MatchNotFoundException matchNotFoundException = assertThrows(MatchNotFoundException.class, () ->
-                scoreBoard.updateScore(HOME_TEAM, AWAY_TEAM, 2, 1));
+                scoreBoardService.updateScore(HOME_TEAM, AWAY_TEAM, 2, 1));
 
         assertEquals("Match not found!", matchNotFoundException.getMessage());
     }
@@ -82,46 +83,46 @@ class ScoreBoardTest {
             "1, -1"
     })
     void shouldNotUpdateScoreForScoreLessThanZero(int homeScore, int awayScore) {
-        scoreBoard.startMatch(HOME_TEAM, AWAY_TEAM);
+        scoreBoardService.startMatch(HOME_TEAM, AWAY_TEAM);
 
         InvalidScoreException invalidScoreException = assertThrows(InvalidScoreException.class, () ->
-                scoreBoard.updateScore(HOME_TEAM, AWAY_TEAM, homeScore, awayScore));
+                scoreBoardService.updateScore(HOME_TEAM, AWAY_TEAM, homeScore, awayScore));
 
         assertEquals("Scores must be non-negative!", invalidScoreException.getMessage());
     }
 
     @Test
     void shouldFinishMatchAndRemoveMatchFromBoard() {
-        scoreBoard.startMatch(HOME_TEAM, AWAY_TEAM);
-        assertEquals(1, scoreBoard.getSummary().size());
+        scoreBoardService.startMatch(HOME_TEAM, AWAY_TEAM);
+        assertEquals(1, scoreBoardService.getSummary().size());
 
-        scoreBoard.finishMatch(HOME_TEAM, AWAY_TEAM);
+        scoreBoardService.finishMatch(HOME_TEAM, AWAY_TEAM);
 
-        assertTrue(scoreBoard.getSummary().isEmpty());
+        assertTrue(scoreBoardService.getSummary().isEmpty());
     }
 
     @Test
     void shouldThrowMatchNotFoundExceptionForMatchNotOnScoreBoard() {
         MatchNotFoundException matchNotFoundException = assertThrows(MatchNotFoundException.class, () ->
-                scoreBoard.finishMatch(HOME_TEAM, AWAY_TEAM));
+                scoreBoardService.finishMatch(HOME_TEAM, AWAY_TEAM));
 
         assertEquals("Match not found!", matchNotFoundException.getMessage());
     }
 
     @Test
     void shouldReturnMatchesOrderedByScoreAndMostRecent() {
-        scoreBoard.startMatch("Mexico","Canada");
-        scoreBoard.updateScore("Mexico","Canada",0,5);
-        scoreBoard.startMatch("Spain","Brazil");
-        scoreBoard.updateScore("Spain","Brazil",10,2);
-        scoreBoard.startMatch("Germany","France");
-        scoreBoard.updateScore("Germany","France",2,2);
-        scoreBoard.startMatch("Uruguay","Italy");
-        scoreBoard.updateScore("Uruguay","Italy",6,6);
-        scoreBoard.startMatch("Argentina","Australia");
-        scoreBoard.updateScore("Argentina","Australia",3,1);
+        scoreBoardService.startMatch("Mexico","Canada");
+        scoreBoardService.updateScore("Mexico","Canada",0,5);
+        scoreBoardService.startMatch("Spain","Brazil");
+        scoreBoardService.updateScore("Spain","Brazil",10,2);
+        scoreBoardService.startMatch("Germany","France");
+        scoreBoardService.updateScore("Germany","France",2,2);
+        scoreBoardService.startMatch("Uruguay","Italy");
+        scoreBoardService.updateScore("Uruguay","Italy",6,6);
+        scoreBoardService.startMatch("Argentina","Australia");
+        scoreBoardService.updateScore("Argentina","Australia",3,1);
 
-        List<Match> sum = scoreBoard.getSummary();
+        List<Match> sum = scoreBoardService.getSummary();
 
         assertMatch(sum.get(0), "Uruguay", "Italy");
         assertMatch(sum.get(1), "Spain", "Brazil");

@@ -1,5 +1,6 @@
-package com.assessment.livescore;
+package com.assessment.livescore.service;
 
+import com.assessment.livescore.ScoreBoardService;
 import com.assessment.livescore.exception.MatchNotFoundException;
 import com.assessment.livescore.model.Match;
 import com.assessment.livescore.repository.MatchRepository;
@@ -10,13 +11,17 @@ import lombok.extern.slf4j.Slf4j;
 import java.util.List;
 
 @Slf4j
-public class ScoreBoard {
+public class ScoreBoardServiceImpl implements ScoreBoardService {
 
     private final MatchRepository matchRepository;
     private final ScoreValidator scoreValidator;
     private final SummaryStrategy summaryStrategy;
 
-    public ScoreBoard(MatchRepository matchRepository, ScoreValidator scoreValidator, SummaryStrategy summaryStrategy){
+    public ScoreBoardServiceImpl(
+            MatchRepository matchRepository,
+            ScoreValidator scoreValidator,
+            SummaryStrategy summaryStrategy
+    ){
         this.matchRepository = matchRepository;
         this.scoreValidator = scoreValidator;
         this.summaryStrategy = summaryStrategy;
