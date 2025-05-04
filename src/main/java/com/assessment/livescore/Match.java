@@ -14,13 +14,23 @@ public class Match {
     private int awayScore = 0;
 
     public Match(String homeTeam, String awayTeam) {
-        if (homeTeam == null || awayTeam == null || homeTeam.isBlank() || awayTeam.isBlank()) {
+        validateTeams(homeTeam, awayTeam);
+
+        this.homeTeam = homeTeam;
+        this.awayTeam = awayTeam;
+    }
+
+    private void validateTeams(String homeTeam, String awayTeam) {
+        if (isNullOrBlank(homeTeam) || isNullOrBlank(awayTeam)) {
             throw new InvalidTeamException("Home and Away teams must not be null or blank!");
         }
+
         if (homeTeam.equalsIgnoreCase(awayTeam)) {
             throw new InvalidTeamException("Home and Away teams must be different!");
         }
-        this.homeTeam = homeTeam;
-        this.awayTeam = awayTeam;
+    }
+
+    private boolean isNullOrBlank(String value) {
+        return value == null || value.isBlank();
     }
 }
