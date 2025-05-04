@@ -8,5 +8,5 @@ public interface ScoreBoardService {
     void startMatch(String homeTeam, String awayTeam);
     void updateScore(String homeTeam, String awayTeam, int homeScore, int awayScore);
     void finishMatch(String homeTeam, String awayTeam);
-    List<Match> getSummary();
+    List<Match> getScoreSummary();
 }

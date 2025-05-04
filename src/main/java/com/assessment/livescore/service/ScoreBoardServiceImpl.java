@@ -4,7 +4,7 @@ import com.assessment.livescore.ScoreBoardService;
 import com.assessment.livescore.exception.MatchNotFoundException;
 import com.assessment.livescore.model.Match;
 import com.assessment.livescore.repository.MatchRepository;
-import com.assessment.livescore.strategy.SummaryStrategy;
+import com.assessment.livescore.strategy.MatchSummaryStrategy;
 import com.assessment.livescore.validation.ScoreValidator;
 import lombok.extern.slf4j.Slf4j;
 
@@ -15,47 +15,47 @@ public class ScoreBoardServiceImpl implements ScoreBoardService {
 
     private final MatchRepository matchRepository;
     private final ScoreValidator scoreValidator;
-    private final SummaryStrategy summaryStrategy;
+    private final MatchSummaryStrategy matchSummaryStrategy;
 
     public ScoreBoardServiceImpl(
             MatchRepository matchRepository,
             ScoreValidator scoreValidator,
-            SummaryStrategy summaryStrategy
+            MatchSummaryStrategy matchSummaryStrategy
     ){
         this.matchRepository = matchRepository;
         this.scoreValidator = scoreValidator;
-        this.summaryStrategy = summaryStrategy;
+        this.matchSummaryStrategy = matchSummaryStrategy;
     }
 
-    public void startMatch(String home, String away) {
-        Match match = new Match(home, away);
-        matchRepository.add(match);
-        log.info("Match started: {} vs {}", home, away);
+    public void startMatch(String homeTeam, String awayTeam) {
+        Match match = new Match(homeTeam, awayTeam);
+        matchRepository.addMatch(match);
+        log.info("Match started: {} vs {}", homeTeam, awayTeam);
     }
 
-    public List<Match> getSummary() {
-        return summaryStrategy.order(matchRepository.getAll());
+    public List<Match> getScoreSummary() {
+        return matchSummaryStrategy.order(matchRepository.getAllMatches());
     }
 
-    public void updateScore(String home, String away, int homeScore, int awayScore) {
+    public void updateScore(String homeTeam, String awayTeam, int homeScore, int awayScore) {
         scoreValidator.validate(homeScore, awayScore);
 
-        Match match = matchRepository.find(home, away)
+        Match match = matchRepository.findMatch(homeTeam, awayTeam)
                 .orElseThrow(() -> {
-                    log.warn("Update failed: Match not found for {} vs {}", home, away);
+                    log.warn("Update failed: Match not found for {} vs {}", homeTeam, awayTeam);
                     return new MatchNotFoundException();
                 });
 
         match.updateScore(homeScore, awayScore);
-        log.info("Updated score: {} vs {} => {}:{}", home, away, homeScore, awayScore);
+        log.info("Updated score: {} vs {} => {}:{}", homeTeam, awayTeam, homeScore, awayScore);
     }
 
-    public void finishMatch(String home, String away) {
-        boolean removed = matchRepository.remove(home, away);
+    public void finishMatch(String homeTeam, String awayTeam) {
+        boolean removed = matchRepository.removeMatch(homeTeam, awayTeam);
         if (removed) {
-            log.info("Match finished: {} vs {}", home, away);
+            log.info("Match finished: {} vs {}", homeTeam, awayTeam);
         } else {
-            log.warn("Finish failed: Match not found for {} vs {}", home, away);
+            log.warn("Finish failed: Match not found for {} vs {}", homeTeam, awayTeam);
             throw new MatchNotFoundException();
         }
     }

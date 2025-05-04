@@ -6,8 +6,8 @@ import java.util.List;
 import java.util.Optional;
 
 public interface MatchRepository {
-    void add(Match match);
-    Optional<Match> find(String home, String away);
-    boolean remove(String home, String away);
-    List<Match> getAll();
+    void addMatch(Match match);
+    Optional<Match> findMatch(String homeTeam, String awayTeam);
+    boolean removeMatch(String homeTeam, String awayTeam);
+    List<Match> getAllMatches();
 }

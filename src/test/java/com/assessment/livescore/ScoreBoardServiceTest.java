@@ -5,7 +5,7 @@ import com.assessment.livescore.exception.MatchNotFoundException;
 import com.assessment.livescore.model.Match;
 import com.assessment.livescore.repository.InMemoryMatchRepository;
 import com.assessment.livescore.service.ScoreBoardServiceImpl;
-import com.assessment.livescore.strategy.DefaultSummaryStrategy;
+import com.assessment.livescore.strategy.DefaultMatchSummaryStrategy;
 import com.assessment.livescore.validation.ScoreValidator;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -28,7 +28,7 @@ class ScoreBoardServiceTest {
         this.scoreBoardService = new ScoreBoardServiceImpl(
                 new InMemoryMatchRepository(),
                 new ScoreValidator(),
-                new DefaultSummaryStrategy()
+                new DefaultMatchSummaryStrategy()
         );
 
     }
@@ -45,12 +45,12 @@ class ScoreBoardServiceTest {
 
     @Test
     void shouldStartMatchAndDisplayOnScoreBoard() {
-        List<Match> scoreBoardBeforeStartingMatch = scoreBoardService.getSummary();
+        List<Match> scoreBoardBeforeStartingMatch = scoreBoardService.getScoreSummary();
         assertEquals(0, scoreBoardBeforeStartingMatch.size());
 
         scoreBoardService.startMatch(HOME_TEAM, AWAY_TEAM);
 
-        List<Match> scoreBoardAfterStartingMatch = scoreBoardService.getSummary();
+        List<Match> scoreBoardAfterStartingMatch = scoreBoardService.getScoreSummary();
 
         assertEquals(1, scoreBoardAfterStartingMatch.size());
         assertEquals(HOME_TEAM, scoreBoardAfterStartingMatch.get(0).getHomeTeam());
@@ -63,7 +63,7 @@ class ScoreBoardServiceTest {
 
         scoreBoardService.updateScore(HOME_TEAM, AWAY_TEAM, 2, 1);
 
-        Match fixture = scoreBoardService.getSummary().get(0);
+        Match fixture = scoreBoardService.getScoreSummary().get(0);
         assertEquals(2, fixture.getHomeScore());
         assertEquals(1, fixture.getAwayScore());
     }
@@ -94,11 +94,11 @@ class ScoreBoardServiceTest {
     @Test
     void shouldFinishMatchAndRemoveMatchFromBoard() {
         scoreBoardService.startMatch(HOME_TEAM, AWAY_TEAM);
-        assertEquals(1, scoreBoardService.getSummary().size());
+        assertEquals(1, scoreBoardService.getScoreSummary().size());
 
         scoreBoardService.finishMatch(HOME_TEAM, AWAY_TEAM);
 
-        assertTrue(scoreBoardService.getSummary().isEmpty());
+        assertTrue(scoreBoardService.getScoreSummary().isEmpty());
     }
 
     @Test
@@ -122,7 +122,7 @@ class ScoreBoardServiceTest {
         scoreBoardService.startMatch("Argentina","Australia");
         scoreBoardService.updateScore("Argentina","Australia",3,1);
 
-        List<Match> sum = scoreBoardService.getSummary();
+        List<Match> sum = scoreBoardService.getScoreSummary();
 
         assertMatch(sum.get(0), "Uruguay", "Italy");
         assertMatch(sum.get(1), "Spain", "Brazil");
