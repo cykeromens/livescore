@@ -3,10 +3,10 @@ package com.assessment.livescore;
 import com.assessment.livescore.exception.MatchNotFoundException;
 import com.assessment.livescore.model.Match;
 import com.assessment.livescore.repository.MatchRepository;
+import com.assessment.livescore.strategy.SummaryStrategy;
 import com.assessment.livescore.validation.ScoreValidator;
 import lombok.extern.slf4j.Slf4j;
 
-import java.util.Comparator;
 import java.util.List;
 
 @Slf4j
@@ -14,10 +14,12 @@ public class ScoreBoard {
 
     private final MatchRepository matchRepository;
     private final ScoreValidator scoreValidator;
+    private final SummaryStrategy summaryStrategy;
 
-    public ScoreBoard(MatchRepository matchRepository, ScoreValidator scoreValidator){
+    public ScoreBoard(MatchRepository matchRepository, ScoreValidator scoreValidator, SummaryStrategy summaryStrategy){
         this.matchRepository = matchRepository;
         this.scoreValidator = scoreValidator;
+        this.summaryStrategy = summaryStrategy;
     }
 
     public void startMatch(String home, String away) {
@@ -27,13 +29,7 @@ public class ScoreBoard {
     }
 
     public List<Match> getSummary() {
-        return matchRepository.getAll()
-                .stream()
-                .sorted(Comparator
-                        .comparingInt((Match m) -> m.getHomeScore() + m.getAwayScore())
-                        .reversed()
-                        .thenComparing(m -> -m.getStartTime()))
-                .toList();
+        return summaryStrategy.order(matchRepository.getAll());
     }
 
     public void updateScore(String home, String away, int homeScore, int awayScore) {

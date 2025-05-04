@@ -51,7 +51,8 @@ public class Match {
         return value == null || value.isBlank();
     }
 
-    public boolean matches(String homeTeam, String awayTeam) {
-        return this.homeTeam.equals(homeTeam) && this.awayTeam.equals(awayTeam);
+    public int totalScore() {
+        return homeScore + awayScore;
     }
+
 }
