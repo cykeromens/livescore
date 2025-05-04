@@ -47,6 +47,9 @@ public class ScoreBoard {
         boolean removed = matches.removeIf(m -> m.getHomeTeam().equals(home) && m.getAwayTeam().equals(away));
         if (removed) {
             log.info("Match finished: {} vs {}", home, away);
+        } else {
+            log.warn("Finish failed: Match not found for {} vs {}", home, away);
+            throw new MatchNotFoundException();
         }
     }
 
